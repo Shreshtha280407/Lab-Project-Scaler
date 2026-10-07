@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import api from '../services/api';
 import Navbar from '../components/Navbar';
 
@@ -24,25 +24,48 @@ const Home = () => {
   }, [navigate]);
 
   if (loading) {
-    return <div style={{ padding: '50px', textAlign: 'center', fontFamily: 'sans-serif' }}>{error || 'Loading profile...'}</div>;
+    return (
+      <div>
+        <Navbar />
+        <div className="page-container" style={{ textAlign: 'center', padding: '3rem', color: 'var(--text-muted)' }}>
+          {error || 'Loading profile...'}
+        </div>
+      </div>
+    );
   }
 
   return (
-    <div style={{ fontFamily: 'sans-serif', margin: 0, padding: 0 }}>
+    <div>
       <Navbar />
-      <div style={{ maxWidth: '600px', margin: '50px auto', padding: '30px', border: '1px solid #eaeaea', borderRadius: '8px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)', textAlign: 'center' }}>
-        <h2>Welcome to ShopKart, {customer.fullName}!</h2>
-        <p style={{ color: '#555', marginBottom: '30px' }}>You are successfully logged in.</p>
-        
-        <button onClick={() => navigate('/products')} style={{ display: 'inline-block', background: '#007bff', color: '#fff', padding: '12px 24px', borderRadius: '4px', textDecoration: 'none', fontSize: '18px', fontWeight: 'bold', border: 'none', cursor: 'pointer' }}>
-          Browse Products
-        </button>
-        
-        <div style={{ background: '#f9f9f9', padding: '20px', borderRadius: '8px', marginTop: '40px', textAlign: 'left' }}>
-          <h3 style={{ marginTop: 0 }}>Your Profile</h3>
-          <p><strong>Name:</strong> {customer.fullName}</p>
-          <p><strong>Email:</strong> {customer.email}</p>
-          <p><strong>Phone:</strong> {customer.phone}</p>
+      <div className="page-container" style={{ maxWidth: '600px', marginTop: '4rem' }}>
+        <div className="card" style={{ textAlign: 'center', padding: '3rem 2rem' }}>
+          <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: '64px', height: '64px', borderRadius: '50%', background: 'var(--primary)', color: 'white', fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '1.5rem' }}>
+            {customer.fullName.charAt(0).toUpperCase()}
+          </div>
+          <h2 style={{ fontSize: '1.5rem', fontWeight: '700', marginBottom: '0.5rem', marginTop: 0 }}>Welcome back, {customer.fullName}!</h2>
+          <p style={{ color: 'var(--text-muted)', marginBottom: '2rem' }}>You are successfully logged in to ShopKart.</p>
+          
+          <Link to="/products" className="btn btn-primary" style={{ padding: '0.75rem 2rem', fontSize: '1.1rem' }}>
+            Start Shopping
+          </Link>
+          
+          <div style={{ background: 'var(--bg-color)', padding: '1.5rem', borderRadius: '0.5rem', marginTop: '3rem', textAlign: 'left', border: '1px solid var(--border-color)' }}>
+            <h3 style={{ marginTop: 0, marginBottom: '1rem', fontSize: '1.1rem', color: 'var(--text-color)' }}>Your Profile Details</h3>
+            <div style={{ display: 'grid', gap: '0.75rem' }}>
+              <div style={{ display: 'flex' }}>
+                <span style={{ color: 'var(--text-muted)', width: '80px' }}>Name:</span>
+                <span style={{ fontWeight: '500' }}>{customer.fullName}</span>
+              </div>
+              <div style={{ display: 'flex' }}>
+                <span style={{ color: 'var(--text-muted)', width: '80px' }}>Email:</span>
+                <span style={{ fontWeight: '500' }}>{customer.email}</span>
+              </div>
+              <div style={{ display: 'flex' }}>
+                <span style={{ color: 'var(--text-muted)', width: '80px' }}>Phone:</span>
+                <span style={{ fontWeight: '500' }}>{customer.phone}</span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

@@ -23,7 +23,6 @@ const Products = () => {
       ]);
       
       setProducts(productsRes.data.products);
-      // Extract IDs from populated wishlist or list of IDs
       const ids = wishlistRes.data.wishlist.map(item => item._id || item);
       setWishlistIds(ids);
     } catch (err) {
@@ -36,57 +35,54 @@ const Products = () => {
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
       fetchProductsAndWishlist();
-    }, 300); // 300ms debounce for typing
+    }, 300);
     return () => clearTimeout(delayDebounceFn);
   }, [search, category, sort]);
 
   return (
-    <div style={{ fontFamily: 'sans-serif' }}>
+    <div>
       <Navbar />
-      <div style={{ maxWidth: '1000px', margin: '30px auto', padding: '0 20px' }}>
-        <h2>Product Catalog</h2>
+      <div className="page-container" style={{ maxWidth: '1200px' }}>
+        <h2 className="page-title">Product Catalog</h2>
 
         {/* Search & Filter Bar */}
-        <div style={{ display: 'flex', gap: '15px', marginBottom: '30px', flexWrap: 'wrap' }}>
-          <input
-            type="text"
-            placeholder="Search products..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            style={{ flex: 1, padding: '10px', borderRadius: '4px', border: '1px solid #ccc' }}
-          />
-          <select 
-            value={category} 
-            onChange={(e) => setCategory(e.target.value)}
-            style={{ padding: '10px', borderRadius: '4px', border: '1px solid #ccc' }}
-          >
-            <option value="">All Categories</option>
-            <option value="Electronics">Electronics</option>
-            <option value="Fashion">Fashion</option>
-            <option value="Books">Books</option>
-            <option value="Home">Home</option>
-          </select>
-          <select 
-            value={sort} 
-            onChange={(e) => setSort(e.target.value)}
-            style={{ padding: '10px', borderRadius: '4px', border: '1px solid #ccc' }}
-          >
-            <option value="">Sort By</option>
-            <option value="price_asc">Price: Low to High</option>
-            <option value="price_desc">Price: High to Low</option>
-          </select>
+        <div className="card" style={{ display: 'flex', gap: '1rem', marginBottom: '2rem', flexWrap: 'wrap', padding: '1rem' }}>
+          <div style={{ flex: '1 1 300px' }}>
+            <input
+              type="text"
+              placeholder="Search products..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+          </div>
+          <div style={{ flex: '1 1 200px' }}>
+            <select value={category} onChange={(e) => setCategory(e.target.value)}>
+              <option value="">All Categories</option>
+              <option value="Electronics">Electronics</option>
+              <option value="Fashion">Fashion</option>
+              <option value="Books">Books</option>
+              <option value="Home">Home</option>
+            </select>
+          </div>
+          <div style={{ flex: '1 1 200px' }}>
+            <select value={sort} onChange={(e) => setSort(e.target.value)}>
+              <option value="">Sort By</option>
+              <option value="price_asc">Price: Low to High</option>
+              <option value="price_desc">Price: High to Low</option>
+            </select>
+          </div>
         </div>
 
         {/* States */}
-        {loading && <p style={{ textAlign: 'center', fontSize: '18px' }}>Loading products...</p>}
-        {error && <p style={{ textAlign: 'center', color: 'red', fontSize: '18px' }}>{error}</p>}
+        {loading && <div style={{ textAlign: 'center', padding: '3rem', color: 'var(--text-muted)' }}>Loading products...</div>}
+        {error && <div style={{ padding: '1rem', background: 'var(--danger-bg)', color: 'var(--danger)', borderRadius: '0.5rem', textAlign: 'center', fontWeight: '500' }}>{error}</div>}
         {!loading && !error && products.length === 0 && (
-          <p style={{ textAlign: 'center', fontSize: '18px', color: '#555' }}>No products found.</p>
+          <div style={{ textAlign: 'center', padding: '3rem', color: 'var(--text-muted)' }}>No products found matching your criteria.</div>
         )}
 
         {/* Product Grid */}
         {!loading && !error && products.length > 0 && (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '20px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1.5rem' }}>
             {products.map(product => (
               <ProductCard 
                 key={product._id} 

@@ -32,7 +32,6 @@ const Checkout = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  // If cart is empty, redirect to cart or products
   if (cartCount === 0) {
     return <Navigate to="/cart" replace />;
   }
@@ -46,7 +45,6 @@ const Checkout = () => {
     setLoading(true);
     setError('');
 
-    // Basic Validation
     if (
       !shippingAddress.fullName.trim() ||
       !shippingAddress.phone.trim() ||
@@ -74,12 +72,10 @@ const Checkout = () => {
         return;
       }
 
-      // Step 1: Create Order
       const { data } = await api.post('/orders/create-payment-order', {
         shippingAddress
       });
 
-      // Step 2: Open Razorpay Checkout
       const options = {
         key: data.key,
         amount: data.amount,
@@ -89,7 +85,6 @@ const Checkout = () => {
         order_id: data.razorpayOrderId,
         handler: async function (response) {
           try {
-            // Step 3: Verify Payment
             const verifyRes = await api.post('/orders/verify-payment', {
               shopKartOrderId: data.shopKartOrderId,
               razorpay_order_id: response.razorpay_order_id,
@@ -111,7 +106,7 @@ const Checkout = () => {
           contact: shippingAddress.phone
         },
         theme: {
-          color: "#007bff"
+          color: "#0F172A"
         }
       };
 
@@ -133,80 +128,94 @@ const Checkout = () => {
   };
 
   return (
-    <div style={{ fontFamily: 'sans-serif' }}>
+    <div>
       <Navbar />
-      <div style={{ maxWidth: '1000px', margin: '30px auto', padding: '0 20px' }}>
-        <h2>Checkout</h2>
-        {error && <p style={{ color: 'red', background: '#ffe6e6', padding: '10px', borderRadius: '4px' }}>{error}</p>}
+      <div className="page-container" style={{ maxWidth: '1100px' }}>
+        <h2 className="page-title" style={{ borderBottom: '1px solid var(--border-light)', paddingBottom: '1rem', marginBottom: '2rem' }}>Checkout</h2>
         
-        <div style={{ display: 'flex', gap: '30px', flexWrap: 'wrap' }}>
+        {error && (
+          <div style={{ padding: '1rem', background: 'var(--danger-bg)', color: 'var(--danger)', borderRadius: '0.5rem', marginBottom: '2rem', fontWeight: '500', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+            {error}
+          </div>
+        )}
+        
+        <div style={{ display: 'flex', gap: '3rem', flexWrap: 'wrap', alignItems: 'flex-start' }}>
           
           {/* Shipping Form */}
-          <div style={{ flex: 2, minWidth: '300px' }}>
-            <h3 style={{ marginTop: 0 }}>Shipping Details</h3>
-            <form onSubmit={handlePlaceOrder} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+          <div style={{ flex: '2 1 450px' }}>
+            <h3 style={{ marginTop: 0, marginBottom: '1.5rem', fontSize: '1.25rem', color: 'var(--text-primary)' }}>Shipping Details</h3>
+            <form onSubmit={handlePlaceOrder} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem', background: '#fff', padding: '2rem', borderRadius: '1rem', border: '1px solid var(--border-light)', boxShadow: 'var(--shadow-sm)' }}>
               <div>
-                <label style={{ display: 'block', marginBottom: '5px' }}>Full Name</label>
-                <input type="text" name="fullName" value={shippingAddress.fullName} onChange={handleInputChange} style={{ width: '100%', padding: '10px', borderRadius: '4px', border: '1px solid #ccc', boxSizing: 'border-box' }} />
+                <label>Full Name</label>
+                <input type="text" name="fullName" value={shippingAddress.fullName} onChange={handleInputChange} placeholder="Enter your full name" />
               </div>
               <div>
-                <label style={{ display: 'block', marginBottom: '5px' }}>Phone</label>
-                <input type="text" name="phone" value={shippingAddress.phone} onChange={handleInputChange} style={{ width: '100%', padding: '10px', borderRadius: '4px', border: '1px solid #ccc', boxSizing: 'border-box' }} />
+                <label>Phone Number</label>
+                <input type="text" name="phone" value={shippingAddress.phone} onChange={handleInputChange} placeholder="10-digit mobile number" />
               </div>
               <div>
-                <label style={{ display: 'block', marginBottom: '5px' }}>Address Line 1</label>
-                <input type="text" name="addressLine1" value={shippingAddress.addressLine1} onChange={handleInputChange} style={{ width: '100%', padding: '10px', borderRadius: '4px', border: '1px solid #ccc', boxSizing: 'border-box' }} />
+                <label>Address Line 1</label>
+                <input type="text" name="addressLine1" value={shippingAddress.addressLine1} onChange={handleInputChange} placeholder="House no, street, area" />
               </div>
-              <div style={{ display: 'flex', gap: '15px' }}>
+              <div style={{ display: 'flex', gap: '1.25rem' }}>
                 <div style={{ flex: 1 }}>
-                  <label style={{ display: 'block', marginBottom: '5px' }}>City</label>
-                  <input type="text" name="city" value={shippingAddress.city} onChange={handleInputChange} style={{ width: '100%', padding: '10px', borderRadius: '4px', border: '1px solid #ccc', boxSizing: 'border-box' }} />
+                  <label>City</label>
+                  <input type="text" name="city" value={shippingAddress.city} onChange={handleInputChange} />
                 </div>
                 <div style={{ flex: 1 }}>
-                  <label style={{ display: 'block', marginBottom: '5px' }}>State</label>
-                  <input type="text" name="state" value={shippingAddress.state} onChange={handleInputChange} style={{ width: '100%', padding: '10px', borderRadius: '4px', border: '1px solid #ccc', boxSizing: 'border-box' }} />
+                  <label>State</label>
+                  <input type="text" name="state" value={shippingAddress.state} onChange={handleInputChange} />
                 </div>
               </div>
               <div>
-                <label style={{ display: 'block', marginBottom: '5px' }}>Pincode</label>
-                <input type="text" name="pincode" value={shippingAddress.pincode} onChange={handleInputChange} style={{ width: '100%', padding: '10px', borderRadius: '4px', border: '1px solid #ccc', boxSizing: 'border-box' }} />
+                <label>Pincode</label>
+                <input type="text" name="pincode" value={shippingAddress.pincode} onChange={handleInputChange} placeholder="6-digit PIN code" />
               </div>
             </form>
           </div>
 
           {/* Order Summary */}
-          <div style={{ flex: 1, minWidth: '300px' }}>
-            <div style={{ border: '1px solid #e0e0e0', borderRadius: '8px', padding: '20px', background: '#f8f9fa', position: 'sticky', top: '20px' }}>
-              <h3 style={{ marginTop: 0 }}>Order Summary</h3>
-              <hr style={{ border: 'none', borderTop: '1px solid #ddd', margin: '15px 0' }} />
+          <div style={{ flex: '1 1 350px', position: 'sticky', top: '5rem' }}>
+            <h3 style={{ marginTop: 0, marginBottom: '1.5rem', fontSize: '1.25rem', color: 'var(--text-primary)' }}>Order Summary</h3>
+            <div className="card" style={{ background: '#F8FAFC', border: '1px solid var(--border-light)' }}>
               
-              <div style={{ marginBottom: '20px' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem', marginBottom: '1.5rem' }}>
                 {cartItems.map((item) => {
                   const product = item.product;
                   if (!product) return null;
                   return (
-                    <div key={product._id} style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
-                      <span>{product.name} &times; {item.quantity}</span>
-                      <span>₹{product.price * item.quantity}</span>
+                    <div key={product._id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                        <div style={{ background: 'var(--border-light)', width: '32px', height: '32px', borderRadius: '0.375rem', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.875rem', fontWeight: '600', color: 'var(--text-secondary)' }}>
+                          {item.quantity}
+                        </div>
+                        <span style={{ fontWeight: '500', color: 'var(--text-primary)' }}>{product.name}</span>
+                      </div>
+                      <span style={{ fontWeight: '600', color: 'var(--text-primary)' }}>₹{product.price * item.quantity}</span>
                     </div>
                   );
                 })}
               </div>
 
-              <hr style={{ border: 'none', borderTop: '1px solid #ddd', margin: '15px 0' }} />
+              <hr style={{ margin: '1.5rem 0' }} />
               
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px', fontSize: '20px', fontWeight: 'bold' }}>
-                <span>Total:</span>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2rem', fontSize: '1.5rem', fontWeight: '700', color: 'var(--text-primary)' }}>
+                <span>Total</span>
                 <span>₹{subtotal}</span>
               </div>
 
               <button 
                 onClick={handlePlaceOrder}
                 disabled={loading}
-                style={{ width: '100%', padding: '15px', background: '#28a745', color: 'white', border: 'none', borderRadius: '4px', fontSize: '16px', fontWeight: 'bold', cursor: loading ? 'not-allowed' : 'pointer' }}
+                className="btn btn-primary"
+                style={{ width: '100%', padding: '1rem', fontSize: '1.1rem' }}
               >
-                {loading ? 'Processing...' : 'Place Order'}
+                {loading ? 'Processing...' : 'Place Order & Pay'}
               </button>
+              <div style={{ textAlign: 'center', marginTop: '1rem', fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                Payments are securely processed via Razorpay.
+              </div>
             </div>
           </div>
 

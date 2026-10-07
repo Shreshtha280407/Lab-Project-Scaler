@@ -80,8 +80,8 @@ export const createPaymentOrder = async (req, res) => {
       key: process.env.RAZORPAY_KEY_ID || 'rzp_test_placeholder',
     });
   } catch (error) {
-    console.error('Error creating payment order:', error);
-    res.status(500).json({ success: false, message: 'Server error' });
+    console.error('Error creating payment order:', error.stack || error.response || error);
+    res.status(500).json({ success: false, message: 'Server error: ' + (error.message || JSON.stringify(error)) });
   }
 };
 
@@ -133,7 +133,7 @@ export const verifyPayment = async (req, res) => {
     res.status(200).json({ success: true, message: 'Payment verified and order placed', order });
   } catch (error) {
     console.error('Error verifying payment:', error);
-    res.status(500).json({ success: false, message: 'Server error' });
+    res.status(500).json({ success: false, message: 'Server error: ' + (error.message || JSON.stringify(error)) });
   }
 };
 
@@ -146,7 +146,7 @@ export const getMyOrders = async (req, res) => {
     res.status(200).json({ success: true, orders });
   } catch (error) {
     console.error('Error fetching orders:', error);
-    res.status(500).json({ success: false, message: 'Server error' });
+    res.status(500).json({ success: false, message: 'Server error: ' + (error.message || JSON.stringify(error)) });
   }
 };
 
@@ -165,6 +165,6 @@ export const getOrderById = async (req, res) => {
     res.status(200).json({ success: true, order });
   } catch (error) {
     console.error('Error fetching single order:', error);
-    res.status(500).json({ success: false, message: 'Server error' });
+    res.status(500).json({ success: false, message: 'Server error: ' + (error.message || JSON.stringify(error)) });
   }
 };

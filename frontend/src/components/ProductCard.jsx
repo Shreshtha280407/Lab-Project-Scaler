@@ -1,93 +1,107 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
-import api from '../services/api';
 import { useCart } from '../context/CartContext';
+import api from '../services/api';
 
-const ProductCard = ({ product, initialWishlisted = false }) => {
+const ProductCard = ({ product, initialWishlisted }) => {
   const [isWishlisted, setIsWishlisted] = useState(initialWishlisted);
-  const [loading, setLoading] = useState(false);
-  const [cartLoading, setCartLoading] = useState(false);
-  const [error, setError] = useState('');
-  
-  const { addToCart, cartItems } = useCart();
-  
-  const cartItem = cartItems.find(item => item.product?._id === product._id || item.product === product._id);
-  const inCartQuantity = cartItem ? cartItem.quantity : 0;
+  const [addingToCart, setAddingToCart] = useState(false);
+  const { addToCart } = useCart();
 
-  const toggleWishlist = async () => {
-    setLoading(true);
-    setError('');
+  const handleWishlistToggle = async () => {
     try {
-      const { data } = await api.patch(`/wishlist/${product._id}/toggle`);
-      setIsWishlisted(data.isWishlisted);
-      window.dispatchEvent(new Event('wishlistUpdated'));
-    } catch (err) {
-      setError('Unable to save product. Please try again.');
-    } finally {
-      setLoading(false);
+      if (isWishlisted) {
+        await api.delete(`/wishlist/${product._id}`);
+        setIsWishlisted(false);
+      } else {
+        await api.post('/wishlist', { productId: product._id });
+        setIsWishlisted(true);
+      }
+    } catch (error) {
+      console.error('Failed to update wishlist');
+      alert('Could not update wishlist. Please try again.');
     }
   };
 
   const handleAddToCart = async () => {
-    setCartLoading(true);
-    setError('');
-    const res = await addToCart(product._id);
-    if (!res.success) {
-      setError(res.message);
+    setAddingToCart(true);
+    try {
+      await addToCart(product._id);
+    } catch (error) {
+      alert(error.response?.data?.message || 'Failed to add to cart');
+    } finally {
+      setAddingToCart(false);
     }
-    setCartLoading(false);
   };
 
   return (
-    <div style={{ border: '1px solid #e0e0e0', borderRadius: '8px', padding: '15px', display: 'flex', flexDirection: 'column', gap: '10px', boxShadow: '0 2px 4px rgba(0,0,0,0.05)', position: 'relative' }}>
-      <img src={product.image} alt={product.name} style={{ width: '100%', height: '200px', objectFit: 'cover', borderRadius: '4px' }} />
-      <h3 style={{ margin: '0' }}>{product.name}</h3>
-      <span style={{ fontSize: '12px', color: '#666', background: '#eee', padding: '4px 8px', borderRadius: '12px', width: 'fit-content' }}>
-        {product.category}
-      </span>
-      <p style={{ margin: 0, fontWeight: 'bold', fontSize: '18px' }}>₹{product.price}</p>
-      <p style={{ margin: 0, color: product.stock > 0 ? 'green' : 'red' }}>
-        {product.stock > 0 ? `${product.stock} units left` : 'Out of Stock'}
-      </p>
-      {error && <p style={{ color: 'red', fontSize: '12px', margin: 0 }}>{error}</p>}
-      <div style={{ display: 'flex', gap: '10px', marginTop: 'auto' }}>
-        <button
-          onClick={toggleWishlist}
-          disabled={loading}
-          style={{
-            flex: 1,
-            padding: '10px',
-            borderRadius: '4px',
-            border: `1px solid ${isWishlisted ? '#ff4757' : '#ccc'}`,
-            background: isWishlisted ? '#ff4757' : 'white',
-            color: isWishlisted ? 'white' : '#333',
-            cursor: loading ? 'not-allowed' : 'pointer'
+    <div className="card card-hover" style={{ display: 'flex', flexDirection: 'column', height: '100%', padding: '1.25rem' }}>
+      <div style={{ position: 'relative', paddingTop: '100%', backgroundColor: '#F8FAFC', borderRadius: '0.75rem', overflow: 'hidden', marginBottom: '1.25rem' }}>
+        {product.image ? (
+          <img 
+            src={product.image} 
+            alt={product.name} 
+            style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover' }}
+          />
+        ) : (
+          <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)' }}>
+            No Image
+          </div>
+        )}
+        <button 
+          onClick={handleWishlistToggle}
+          style={{ 
+            position: 'absolute', 
+            top: '0.75rem', 
+            right: '0.75rem', 
+            background: 'white', 
+            border: 'none', 
+            borderRadius: '50%', 
+            width: '36px', 
+            height: '36px', 
+            display: 'flex', 
+            alignItems: 'center', 
+            justifyContent: 'center', 
+            cursor: 'pointer',
+            boxShadow: 'var(--shadow-sm)',
+            color: isWishlisted ? 'var(--danger)' : 'var(--text-muted)',
+            transition: 'all 0.2s',
+            opacity: 0.9
           }}
+          title={isWishlisted ? "Remove from Wishlist" : "Add to Wishlist"}
+          onMouseOver={(e) => { e.currentTarget.style.opacity = '1'; e.currentTarget.style.transform = 'scale(1.05)' }}
+          onMouseOut={(e) => { e.currentTarget.style.opacity = '0.9'; e.currentTarget.style.transform = 'scale(1)' }}
         >
-          {loading ? '⏳...' : isWishlisted ? '♥ Added' : '♡ Wishlist'}
-        </button>
-        <button
-          onClick={handleAddToCart}
-          disabled={cartLoading || product.stock === 0}
-          style={{
-            flex: 2,
-            padding: '10px',
-            borderRadius: '4px',
-            border: 'none',
-            background: product.stock === 0 ? '#ccc' : '#007bff',
-            color: 'white',
-            cursor: product.stock === 0 || cartLoading ? 'not-allowed' : 'pointer'
-          }}
-        >
-          {cartLoading ? 'Adding...' : inCartQuantity > 0 ? 'Add Another' : 'Add to Cart'}
+          <svg width="18" height="18" viewBox="0 0 24 24" fill={isWishlisted ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+          </svg>
         </button>
       </div>
-      <Link 
-        to={`/products/${product._id}`} 
-        style={{ textAlign: 'center', color: '#007bff', padding: '5px', borderRadius: '4px', textDecoration: 'none', fontSize: '14px' }}
-      >
-        View Details
-      </Link>
+      
+      <div style={{ display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
+        <div style={{ color: 'var(--text-muted)', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.5rem', fontWeight: '600' }}>
+          {product.category}
+        </div>
+        <h3 style={{ margin: '0 0 0.5rem 0', fontSize: '1.1rem', fontWeight: '600', color: 'var(--text-primary)', lineHeight: '1.4' }}>
+          {product.name}
+        </h3>
+        <p style={{ margin: '0 0 1.25rem 0', color: 'var(--text-secondary)', fontSize: '0.875rem', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+          {product.description}
+        </p>
+        
+        <div style={{ marginTop: 'auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div style={{ fontWeight: '700', fontSize: '1.25rem', color: 'var(--text-primary)' }}>
+            ₹{product.price}
+          </div>
+          <button 
+            onClick={handleAddToCart}
+            disabled={product.stock === 0 || addingToCart}
+            className="btn btn-primary"
+            style={{ padding: '0.5rem 1rem', fontSize: '0.875rem', borderRadius: '0.375rem' }}
+          >
+            {product.stock === 0 ? 'Out of Stock' : addingToCart ? 'Adding...' : 'Add to Cart'}
+          </button>
+        </div>
+      </div>
     </div>
   );
 };
