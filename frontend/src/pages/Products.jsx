@@ -5,6 +5,7 @@ import Navbar from '../components/Navbar';
 
 const Products = () => {
   const [products, setProducts] = useState([]);
+  const [wishlistIds, setWishlistIds] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   
@@ -12,14 +13,19 @@ const Products = () => {
   const [category, setCategory] = useState('');
   const [sort, setSort] = useState('');
 
-  const fetchProducts = async () => {
+  const fetchProductsAndWishlist = async () => {
     setLoading(true);
     setError('');
     try {
-      const { data } = await api.get('/products', {
-        params: { search, category, sort }
-      });
-      setProducts(data.products);
+      const [productsRes, wishlistRes] = await Promise.all([
+        api.get('/products', { params: { search, category, sort } }),
+        api.get('/wishlist').catch(() => ({ data: { wishlist: [] } }))
+      ]);
+      
+      setProducts(productsRes.data.products);
+      // Extract IDs from populated wishlist or list of IDs
+      const ids = wishlistRes.data.wishlist.map(item => item._id || item);
+      setWishlistIds(ids);
     } catch (err) {
       setError('Something went wrong while loading products.');
     } finally {
@@ -29,7 +35,7 @@ const Products = () => {
 
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
-      fetchProducts();
+      fetchProductsAndWishlist();
     }, 300); // 300ms debounce for typing
     return () => clearTimeout(delayDebounceFn);
   }, [search, category, sort]);
@@ -82,7 +88,11 @@ const Products = () => {
         {!loading && !error && products.length > 0 && (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '20px' }}>
             {products.map(product => (
-              <ProductCard key={product._id} product={product} />
+              <ProductCard 
+                key={product._id} 
+                product={product} 
+                initialWishlisted={wishlistIds.includes(product._id)} 
+              />
             ))}
           </div>
         )}

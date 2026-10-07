@@ -1,8 +1,28 @@
 import { Link, useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 import api from '../services/api';
 
 const Navbar = () => {
   const navigate = useNavigate();
+  const [wishlistCount, setWishlistCount] = useState(0);
+
+  const fetchWishlistCount = async () => {
+    try {
+      const { data } = await api.get('/wishlist');
+      setWishlistCount(data.wishlist.length);
+    } catch (error) {
+      console.error('Failed to fetch wishlist count', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchWishlistCount();
+
+    const handleWishlistUpdate = () => fetchWishlistCount();
+    window.addEventListener('wishlistUpdated', handleWishlistUpdate);
+
+    return () => window.removeEventListener('wishlistUpdated', handleWishlistUpdate);
+  }, []);
 
   const handleLogout = async () => {
     try {
@@ -20,6 +40,9 @@ const Navbar = () => {
       </h2>
       <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
         <Link to="/products" style={{ color: '#fff', textDecoration: 'none' }}>Shop</Link>
+        <Link to="/wishlist" style={{ color: '#fff', textDecoration: 'none' }}>
+          Wishlist <span style={{ background: '#ff4757', padding: '2px 8px', borderRadius: '12px', fontSize: '12px', marginLeft: '5px' }}>{wishlistCount}</span>
+        </Link>
         <button 
           onClick={handleLogout} 
           style={{ background: '#dc3545', color: '#fff', border: 'none', padding: '8px 15px', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}
