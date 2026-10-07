@@ -1,10 +1,12 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import api from '../services/api';
+import { useCart } from '../context/CartContext';
 
 const Navbar = () => {
   const navigate = useNavigate();
   const [wishlistCount, setWishlistCount] = useState(0);
+  const { cartCount } = useCart();
 
   const fetchWishlistCount = async () => {
     try {
@@ -42,6 +44,9 @@ const Navbar = () => {
         <Link to="/products" style={{ color: '#fff', textDecoration: 'none' }}>Shop</Link>
         <Link to="/wishlist" style={{ color: '#fff', textDecoration: 'none' }}>
           Wishlist <span style={{ background: '#ff4757', padding: '2px 8px', borderRadius: '12px', fontSize: '12px', marginLeft: '5px' }}>{wishlistCount}</span>
+        </Link>
+        <Link to="/cart" style={{ color: '#fff', textDecoration: 'none' }}>
+          Cart <span style={{ background: '#007bff', padding: '2px 8px', borderRadius: '12px', fontSize: '12px', marginLeft: '5px' }}>{cartCount}</span>
         </Link>
         <button 
           onClick={handleLogout} 
