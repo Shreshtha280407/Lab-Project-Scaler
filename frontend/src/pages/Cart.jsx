@@ -125,12 +125,12 @@ const Cart = () => {
                 <span>₹{subtotal}</span>
               </div>
 
-              <button 
-                style={{ width: '100%', padding: '15px', background: '#28a745', color: 'white', border: 'none', borderRadius: '4px', fontSize: '16px', fontWeight: 'bold', cursor: 'pointer' }}
-                onClick={() => alert('Proceeding to checkout... (Next Lab)')}
+              <Link 
+                to="/checkout"
+                style={{ display: 'block', textAlign: 'center', width: '100%', padding: '15px', background: '#28a745', color: 'white', border: 'none', borderRadius: '4px', fontSize: '16px', fontWeight: 'bold', cursor: 'pointer', textDecoration: 'none', boxSizing: 'border-box' }}
               >
                 Proceed to Checkout
-              </button>
+              </Link>
             </div>
           </div>
         </div>

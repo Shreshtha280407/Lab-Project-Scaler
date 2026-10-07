@@ -42,6 +42,7 @@ const Navbar = () => {
       </h2>
       <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
         <Link to="/products" style={{ color: '#fff', textDecoration: 'none' }}>Shop</Link>
+        <Link to="/orders" style={{ color: '#fff', textDecoration: 'none' }}>Orders</Link>
         <Link to="/wishlist" style={{ color: '#fff', textDecoration: 'none' }}>
           Wishlist <span style={{ background: '#ff4757', padding: '2px 8px', borderRadius: '12px', fontSize: '12px', marginLeft: '5px' }}>{wishlistCount}</span>
         </Link>

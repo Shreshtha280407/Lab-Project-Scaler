@@ -61,6 +61,10 @@ export const CartProvider = ({ children }) => {
     }
   };
 
+  const clearCart = () => {
+    setCartItems([]);
+  };
+
   // Derived values
   const cartCount = cartItems.reduce((acc, item) => acc + item.quantity, 0);
   const subtotal = cartItems.reduce((acc, item) => {
@@ -78,6 +82,7 @@ export const CartProvider = ({ children }) => {
       addToCart,
       updateQuantity,
       removeFromCart,
+      clearCart,
       cartCount,
       subtotal
     }}>
