@@ -1,7 +1,8 @@
+import PageLayout, { PageHeading, Notice, LoadingState, EmptyState } from '../components/PageLayout';
+import Icon from '../components/Icon';
 import React, { useState } from 'react';
 import { useCart } from '../context/CartContext';
 import { useNavigate, Navigate } from 'react-router-dom';
-import Navbar from '../components/Navbar';
 import api from '../services/api';
 
 const loadRazorpayScript = () => {
@@ -127,102 +128,19 @@ const Checkout = () => {
     }
   };
 
-  return (
-    <div>
-      <Navbar />
-      <div className="page-container" style={{ maxWidth: '1100px' }}>
-        <h2 className="page-title" style={{ borderBottom: '1px solid var(--border-light)', paddingBottom: '1rem', marginBottom: '2rem' }}>Checkout</h2>
-        
-        {error && (
-          <div style={{ padding: '1rem', background: 'var(--danger-bg)', color: 'var(--danger)', borderRadius: '0.5rem', marginBottom: '2rem', fontWeight: '500', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
-            {error}
-          </div>
-        )}
-        
-        <div style={{ display: 'flex', gap: '3rem', flexWrap: 'wrap', alignItems: 'flex-start' }}>
-          
-          {/* Shipping Form */}
-          <div style={{ flex: '2 1 450px' }}>
-            <h3 style={{ marginTop: 0, marginBottom: '1.5rem', fontSize: '1.25rem', color: 'var(--text-primary)' }}>Shipping Details</h3>
-            <form onSubmit={handlePlaceOrder} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem', background: '#fff', padding: '2rem', borderRadius: '1rem', border: '1px solid var(--border-light)', boxShadow: 'var(--shadow-sm)' }}>
-              <div>
-                <label>Full Name</label>
-                <input type="text" name="fullName" value={shippingAddress.fullName} onChange={handleInputChange} placeholder="Enter your full name" />
-              </div>
-              <div>
-                <label>Phone Number</label>
-                <input type="text" name="phone" value={shippingAddress.phone} onChange={handleInputChange} placeholder="10-digit mobile number" />
-              </div>
-              <div>
-                <label>Address Line 1</label>
-                <input type="text" name="addressLine1" value={shippingAddress.addressLine1} onChange={handleInputChange} placeholder="House no, street, area" />
-              </div>
-              <div style={{ display: 'flex', gap: '1.25rem' }}>
-                <div style={{ flex: 1 }}>
-                  <label>City</label>
-                  <input type="text" name="city" value={shippingAddress.city} onChange={handleInputChange} />
-                </div>
-                <div style={{ flex: 1 }}>
-                  <label>State</label>
-                  <input type="text" name="state" value={shippingAddress.state} onChange={handleInputChange} />
-                </div>
-              </div>
-              <div>
-                <label>Pincode</label>
-                <input type="text" name="pincode" value={shippingAddress.pincode} onChange={handleInputChange} placeholder="6-digit PIN code" />
-              </div>
-            </form>
-          </div>
-
-          {/* Order Summary */}
-          <div style={{ flex: '1 1 350px', position: 'sticky', top: '5rem' }}>
-            <h3 style={{ marginTop: 0, marginBottom: '1.5rem', fontSize: '1.25rem', color: 'var(--text-primary)' }}>Order Summary</h3>
-            <div className="card" style={{ background: '#F8FAFC', border: '1px solid var(--border-light)' }}>
-              
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem', marginBottom: '1.5rem' }}>
-                {cartItems.map((item) => {
-                  const product = item.product;
-                  if (!product) return null;
-                  return (
-                    <div key={product._id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                        <div style={{ background: 'var(--border-light)', width: '32px', height: '32px', borderRadius: '0.375rem', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.875rem', fontWeight: '600', color: 'var(--text-secondary)' }}>
-                          {item.quantity}
-                        </div>
-                        <span style={{ fontWeight: '500', color: 'var(--text-primary)' }}>{product.name}</span>
-                      </div>
-                      <span style={{ fontWeight: '600', color: 'var(--text-primary)' }}>₹{product.price * item.quantity}</span>
-                    </div>
-                  );
-                })}
-              </div>
-
-              <hr style={{ margin: '1.5rem 0' }} />
-              
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2rem', fontSize: '1.5rem', fontWeight: '700', color: 'var(--text-primary)' }}>
-                <span>Total</span>
-                <span>₹{subtotal}</span>
-              </div>
-
-              <button 
-                onClick={handlePlaceOrder}
-                disabled={loading}
-                className="btn btn-primary"
-                style={{ width: '100%', padding: '1rem', fontSize: '1.1rem' }}
-              >
-                {loading ? 'Processing...' : 'Place Order & Pay'}
-              </button>
-              <div style={{ textAlign: 'center', marginTop: '1rem', fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                Payments are securely processed via Razorpay.
-              </div>
-            </div>
-          </div>
-
-        </div>
-      </div>
-    </div>
-  );
+  return <PageLayout><PageHeading eyebrow="THE FINAL LITTLE DETAIL" title="Checkout" subtitle="Your next favourites are almost yours." />
+    {error && <Notice>{error}</Notice>}<div className="two-column"><section className="card checkout-section"><h2 className="section-title"><Icon name="pin" size={20} />Shipping Details</h2><form onSubmit={handlePlaceOrder} className="checkout-form">
+      <div><label htmlFor="shipping-name">Full Name</label><input id="shipping-name" type="text" name="fullName" autoComplete="shipping name" value={shippingAddress.fullName} onChange={handleInputChange} placeholder="Enter your full name" /></div>
+      <div><label htmlFor="shipping-phone">Phone Number</label><input id="shipping-phone" type="text" name="phone" autoComplete="shipping tel" value={shippingAddress.phone} onChange={handleInputChange} placeholder="10-digit mobile number" /></div>
+      <div className="full-width"><label htmlFor="shipping-address">Address Line 1</label><input id="shipping-address" type="text" name="addressLine1" autoComplete="shipping address-line1" value={shippingAddress.addressLine1} onChange={handleInputChange} placeholder="House no, street, area" /></div>
+      <div><label htmlFor="shipping-city">City</label><input id="shipping-city" type="text" name="city" autoComplete="shipping address-level2" value={shippingAddress.city} onChange={handleInputChange} placeholder="City" /></div>
+      <div><label htmlFor="shipping-state">State</label><input id="shipping-state" type="text" name="state" autoComplete="shipping address-level1" value={shippingAddress.state} onChange={handleInputChange} placeholder="State" /></div>
+      <div className="full-width"><label htmlFor="shipping-pincode">Pincode</label><input id="shipping-pincode" type="text" name="pincode" inputMode="numeric" autoComplete="shipping postal-code" value={shippingAddress.pincode} onChange={handleInputChange} placeholder="6-digit PIN code" /></div>
+    </form></section><aside className="card summary-card"><h2>Order Summary</h2><div className="order-summary-items">{cartItems.map(item => {
+      const product = item.product; if (!product) return null;
+      return <div key={product._id} className="order-summary-item"><div><span className="item-quantity">{item.quantity}</span><span>{product.name}</span></div><span>₹{(product.price * item.quantity).toLocaleString('en-IN')}</span></div>;
+    })}</div><div className="summary-total"><span>Total</span><span className="price">₹{subtotal.toLocaleString('en-IN')}</span></div><button onClick={handlePlaceOrder} disabled={loading} className="btn btn-primary btn-block"><Icon name="lock" size={16} />{loading ? 'Processing...' : 'Place Order & Pay'}</button><p className="secure-note"><Icon name="lock" size={12} />Payments securely processed via Razorpay.</p></aside></div>
+  </PageLayout>;
 };
 
 export default Checkout;

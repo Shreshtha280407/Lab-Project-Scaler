@@ -1,6 +1,7 @@
+import PageLayout, { PageHeading, Notice, LoadingState, EmptyState } from '../components/PageLayout';
+import Icon from '../components/Icon';
 import { useState, useEffect } from 'react';
 import api from '../services/api';
-import Navbar from '../components/Navbar';
 import { Link } from 'react-router-dom';
 
 const Wishlist = () => {
@@ -35,63 +36,9 @@ const Wishlist = () => {
     }
   };
 
-  return (
-    <div style={{ fontFamily: 'sans-serif' }}>
-      <Navbar />
-      <div style={{ maxWidth: '1000px', margin: '30px auto', padding: '0 20px' }}>
-        <h2>My Wishlist</h2>
-        <p>{wishlist.length} products saved</p>
-
-        {loading && <p style={{ textAlign: 'center', fontSize: '18px' }}>Loading wishlist...</p>}
-        {error && <p style={{ textAlign: 'center', color: 'red', fontSize: '18px' }}>{error}</p>}
-        
-        {!loading && !error && wishlist.length === 0 && (
-          <div style={{ textAlign: 'center', marginTop: '50px' }}>
-            <p style={{ fontSize: '18px', color: '#555' }}>Your wishlist is empty.</p>
-            <Link to="/products" style={{ background: '#007bff', color: 'white', padding: '10px 20px', borderRadius: '4px', textDecoration: 'none', display: 'inline-block', marginTop: '10px' }}>
-              Continue Shopping
-            </Link>
-          </div>
-        )}
-
-        {!loading && !error && wishlist.length > 0 && (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '20px' }}>
-            {wishlist.map(product => (
-              <div key={product._id} style={{ border: '1px solid #e0e0e0', borderRadius: '8px', padding: '15px', display: 'flex', flexDirection: 'column', gap: '10px', boxShadow: '0 2px 4px rgba(0,0,0,0.05)' }}>
-                <img src={product.image} alt={product.name} style={{ width: '100%', height: '200px', objectFit: 'cover', borderRadius: '4px' }} />
-                <h3 style={{ margin: '0' }}>{product.name}</h3>
-                <span style={{ fontSize: '12px', color: '#666', background: '#eee', padding: '4px 8px', borderRadius: '12px', width: 'fit-content' }}>
-                  {product.category}
-                </span>
-                <p style={{ margin: 0, fontWeight: 'bold', fontSize: '18px' }}>₹{product.price}</p>
-                <div style={{ display: 'flex', gap: '10px', marginTop: 'auto' }}>
-                  <Link 
-                    to={`/products/${product._id}`} 
-                    style={{ flex: 1, textAlign: 'center', background: '#007bff', color: 'white', padding: '10px', borderRadius: '4px', textDecoration: 'none' }}
-                  >
-                    View Details
-                  </Link>
-                  <button
-                    onClick={() => handleRemove(product._id)}
-                    style={{
-                      padding: '10px',
-                      borderRadius: '4px',
-                      border: '1px solid #dc3545',
-                      background: 'white',
-                      color: '#dc3545',
-                      cursor: 'pointer'
-                    }}
-                  >
-                    Remove
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-    </div>
-  );
+  return <PageLayout><PageHeading eyebrow="KEEP THE GOOD FINDS CLOSE" title="My Wishlist" subtitle="All your favourites, in one lovely place." />
+    {loading ? <LoadingState>Loading wishlist...</LoadingState> : error ? <Notice>{error}</Notice> : wishlist.length === 0 ? <EmptyState icon="heart" title="Your wishlist is empty."><Link to="/products" className="btn btn-primary">Browse Products<Icon name="arrow" size={18} /></Link></EmptyState> : <div className="product-grid">{wishlist.map(product => <article key={product._id} className="card product-card"><div className="product-image-wrap">{product.image ? <img src={product.image} alt={product.name} className="product-image" loading="lazy" /> : <div className="image-placeholder"><Icon name="bag" size={30} /><span>No Image</span></div>}</div><div className="product-copy"><p className="product-category">{product.category}</p><h3 className="product-name">{product.name}</h3><p className="product-description">{product.description}</p><p className="price">₹{product.price.toLocaleString('en-IN')}</p><div className="wishlist-actions"><Link to={`/products/${product._id}`} className="btn btn-outline">View Details</Link><button onClick={() => handleRemove(product._id)} className="btn btn-outline" aria-label={`Remove ${product.name} from wishlist`}><Icon name="heart" size={15} />Remove</button></div></div></article>)}</div>}
+  </PageLayout>;
 };
 
 export default Wishlist;

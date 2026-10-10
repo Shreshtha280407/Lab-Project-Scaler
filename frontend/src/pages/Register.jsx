@@ -1,3 +1,6 @@
+import AuthLayout from '../components/AuthLayout';
+import { Notice } from '../components/PageLayout';
+import Icon from '../components/Icon';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import api from '../services/api';
@@ -28,57 +31,16 @@ const Register = () => {
     }
   };
 
-  return (
-    <div style={{ maxWidth: '400px', margin: '50px auto', fontFamily: 'sans-serif', padding: '30px', border: '1px solid #eaeaea', borderRadius: '8px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)' }}>
-      <h2 style={{ textAlign: 'center', marginBottom: '20px' }}>Create an Account</h2>
-      {error && <p style={{ color: '#d8000c', textAlign: 'center', background: '#ffd2d2', padding: '10px', borderRadius: '4px' }}>{error}</p>}
-      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-        <input
-          type="text"
-          name="fullName"
-          placeholder="Full Name"
-          value={formData.fullName}
-          onChange={handleChange}
-          required
-          style={{ padding: '12px', borderRadius: '4px', border: '1px solid #ccc' }}
-        />
-        <input
-          type="email"
-          name="email"
-          placeholder="Email address"
-          value={formData.email}
-          onChange={handleChange}
-          required
-          style={{ padding: '12px', borderRadius: '4px', border: '1px solid #ccc' }}
-        />
-        <input
-          type="text"
-          name="phone"
-          placeholder="Phone Number"
-          value={formData.phone}
-          onChange={handleChange}
-          required
-          style={{ padding: '12px', borderRadius: '4px', border: '1px solid #ccc' }}
-        />
-        <input
-          type="password"
-          name="password"
-          placeholder="Password (min 6 chars)"
-          value={formData.password}
-          onChange={handleChange}
-          required
-          minLength="6"
-          style={{ padding: '12px', borderRadius: '4px', border: '1px solid #ccc' }}
-        />
-        <button type="submit" style={{ padding: '12px', background: '#28a745', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '16px', fontWeight: 'bold' }}>
-          Create Account
-        </button>
-      </form>
-      <p style={{ marginTop: '20px', textAlign: 'center' }}>
-        Already have an account? <Link to="/login" style={{ color: '#007bff', textDecoration: 'none' }}>Login</Link>
-      </p>
-    </div>
-  );
+  return <AuthLayout register><p className="eyebrow">YOUR NEXT GOOD FIND STARTS HERE</p><h2>Create an Account</h2><p className="auth-description">A world of everyday favourites awaits.</p>
+    {error && <Notice>{error}</Notice>}
+    <form onSubmit={handleSubmit} className="auth-fields">
+      <div><label htmlFor="register-name">Full Name</label><input id="register-name" type="text" name="fullName" autoComplete="name" placeholder="Enter your full name" value={formData.fullName} onChange={handleChange} required /></div>
+      <div><label htmlFor="register-email">Email address</label><input id="register-email" type="email" name="email" autoComplete="email" placeholder="you@example.com" value={formData.email} onChange={handleChange} required /></div>
+      <div><label htmlFor="register-phone">Phone Number</label><input id="register-phone" type="text" name="phone" autoComplete="tel" placeholder="Enter your phone number" value={formData.phone} onChange={handleChange} required /></div>
+      <div><label htmlFor="register-password">Password</label><input id="register-password" type="password" name="password" autoComplete="new-password" placeholder="Password (min 6 chars)" value={formData.password} onChange={handleChange} required minLength="6" /></div>
+      <button type="submit" className="btn btn-primary btn-block">Create Account<Icon name="arrow" size={18} /></button>
+    </form><p className="auth-switch">Already have an account? <Link to="/login">Login</Link></p>
+  </AuthLayout>;
 };
 
 export default Register;

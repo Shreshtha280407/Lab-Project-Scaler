@@ -16,7 +16,7 @@ export const addToWishlist = async (req, res) => {
     const customer = await Customer.findById(customerId);
 
     // Check if already in wishlist
-    if (customer.wishlist.includes(productId)) {
+    if (customer.wishlist.some(id => id.toString() === productId)) {
       return res.status(400).json({ success: false, message: 'Product already in wishlist' });
     }
 
@@ -79,7 +79,7 @@ export const toggleWishlist = async (req, res) => {
 
     const customer = await Customer.findById(customerId);
 
-    const isInWishlist = customer.wishlist.includes(productId);
+    const isInWishlist = customer.wishlist.some(id => id.toString() === productId);
 
     if (isInWishlist) {
       customer.wishlist = customer.wishlist.filter(

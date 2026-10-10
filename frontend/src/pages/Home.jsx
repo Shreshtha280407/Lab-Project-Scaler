@@ -1,7 +1,8 @@
+import PageLayout, { PageHeading, Notice, LoadingState, EmptyState } from '../components/PageLayout';
+import Icon from '../components/Icon';
 import { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import api from '../services/api';
-import Navbar from '../components/Navbar';
 
 const Home = () => {
   const [customer, setCustomer] = useState(null);
@@ -23,53 +24,10 @@ const Home = () => {
     fetchProfile();
   }, [navigate]);
 
-  if (loading) {
-    return (
-      <div>
-        <Navbar />
-        <div className="page-container" style={{ textAlign: 'center', padding: '3rem', color: 'var(--text-muted)' }}>
-          {error || 'Loading profile...'}
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div>
-      <Navbar />
-      <div className="page-container" style={{ maxWidth: '600px', marginTop: '4rem' }}>
-        <div className="card" style={{ textAlign: 'center', padding: '3rem 2rem' }}>
-          <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: '64px', height: '64px', borderRadius: '50%', background: 'var(--primary)', color: 'white', fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '1.5rem' }}>
-            {customer.fullName.charAt(0).toUpperCase()}
-          </div>
-          <h2 style={{ fontSize: '1.5rem', fontWeight: '700', marginBottom: '0.5rem', marginTop: 0 }}>Welcome back, {customer.fullName}!</h2>
-          <p style={{ color: 'var(--text-muted)', marginBottom: '2rem' }}>You are successfully logged in to ShopKart.</p>
-          
-          <Link to="/products" className="btn btn-primary" style={{ padding: '0.75rem 2rem', fontSize: '1.1rem' }}>
-            Start Shopping
-          </Link>
-          
-          <div style={{ background: 'var(--bg-color)', padding: '1.5rem', borderRadius: '0.5rem', marginTop: '3rem', textAlign: 'left', border: '1px solid var(--border-color)' }}>
-            <h3 style={{ marginTop: 0, marginBottom: '1rem', fontSize: '1.1rem', color: 'var(--text-color)' }}>Your Profile Details</h3>
-            <div style={{ display: 'grid', gap: '0.75rem' }}>
-              <div style={{ display: 'flex' }}>
-                <span style={{ color: 'var(--text-muted)', width: '80px' }}>Name:</span>
-                <span style={{ fontWeight: '500' }}>{customer.fullName}</span>
-              </div>
-              <div style={{ display: 'flex' }}>
-                <span style={{ color: 'var(--text-muted)', width: '80px' }}>Email:</span>
-                <span style={{ fontWeight: '500' }}>{customer.email}</span>
-              </div>
-              <div style={{ display: 'flex' }}>
-                <span style={{ color: 'var(--text-muted)', width: '80px' }}>Phone:</span>
-                <span style={{ fontWeight: '500' }}>{customer.phone}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+  if (loading) return <PageLayout><LoadingState>{error || 'Loading profile...'}</LoadingState></PageLayout>;
+  return <PageLayout><div className="profile-welcome"><div className="avatar">{customer.fullName.charAt(0).toUpperCase()}</div><div><p className="eyebrow">MAKE YOURSELF AT HOME</p><h1>Welcome, {customer.fullName}.</h1><p>Good things are waiting to be discovered.</p></div></div>
+    <section className="card profile-card"><h2 className="section-title"><Icon name="user" />Your Profile</h2><dl className="profile-details"><div><dt>Full Name</dt><dd>{customer.fullName}</dd></div><div><dt>Email Address</dt><dd>{customer.email}</dd></div><div><dt>Phone Number</dt><dd>{customer.phone}</dd></div></dl><Link to="/products" className="btn btn-primary">Start Shopping<Icon name="arrow" size={18} /></Link></section>
+  </PageLayout>;
 };
 
 export default Home;
