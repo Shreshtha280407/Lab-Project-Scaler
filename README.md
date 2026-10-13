@@ -26,7 +26,6 @@ A full-stack shopping app with product discovery, wishlists, a persistent cart, 
 ## Contents
 
 - [Features](#features)
-- [Screenshots](#screenshots)
 - [Tech stack and architecture](#tech-stack-and-architecture)
 - [Local setup](#local-setup)
 - [Environment variables](#environment-variables)
