@@ -4,11 +4,13 @@ import Icon from '../components/Icon';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import api from '../services/api';
+import { useCart } from '../context/CartContext';
 
 const Login = () => {
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  const { fetchCart } = useCart();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -19,6 +21,7 @@ const Login = () => {
     setError('');
     try {
       await api.post('/customers/login', formData);
+      await fetchCart();
       navigate('/home');
     } catch (err) {
       setError(err.response?.data?.message || 'Invalid Credentials');

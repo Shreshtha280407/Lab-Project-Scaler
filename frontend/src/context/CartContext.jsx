@@ -17,8 +17,13 @@ export const CartProvider = ({ children }) => {
       setCartItems(data.cart || []);
       setError(null);
     } catch (err) {
-      console.error('Failed to fetch cart:', err);
-      setError('Failed to load cart');
+      if (err.response?.status === 401) {
+        setCartItems([]);
+        setError(null);
+      } else {
+        console.error('Failed to fetch cart:', err);
+        setError('Failed to load cart');
+      }
     } finally {
       setLoading(false);
     }
@@ -32,6 +37,7 @@ export const CartProvider = ({ children }) => {
     try {
       const { data } = await api.post(`/cart/${productId}`);
       setCartItems(data.cart);
+      setError(null);
       return { success: true };
     } catch (err) {
       console.error('Failed to add to cart:', err);
@@ -43,6 +49,7 @@ export const CartProvider = ({ children }) => {
     try {
       const { data } = await api.patch(`/cart/${productId}`, { quantity });
       setCartItems(data.cart);
+      setError(null);
       return { success: true };
     } catch (err) {
       console.error('Failed to update quantity:', err);
@@ -54,6 +61,7 @@ export const CartProvider = ({ children }) => {
     try {
       const { data } = await api.delete(`/cart/${productId}`);
       setCartItems(data.cart);
+      setError(null);
       return { success: true };
     } catch (err) {
       console.error('Failed to remove from cart:', err);
@@ -63,6 +71,7 @@ export const CartProvider = ({ children }) => {
 
   const clearCart = () => {
     setCartItems([]);
+    setError(null);
   };
 
   // Derived values

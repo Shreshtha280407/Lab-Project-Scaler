@@ -8,11 +8,12 @@ import api from '../services/api';
 
 const Navbar = () => {
   const navigate = useNavigate();
-  const { cartCount } = useCart();
+  const { cartCount, clearCart } = useCart();
 
   const handleLogout = async () => {
     try {
       await api.post('/customers/logout');
+      clearCart();
       navigate('/login');
     } catch (err) {
       console.error('Logout failed');
