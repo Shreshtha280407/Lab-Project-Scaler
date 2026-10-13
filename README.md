@@ -51,7 +51,7 @@ A full-stack shopping app with product discovery, wishlists, a persistent cart, 
 
 ## Screenshots
 
-Captured with **Playwright on October 10, 2026**. Catalog, product details, filtering, and theme screenshots are from the running local frontend and backend, using the existing Docker MongoDB database.
+Catalog, product details, filtering, and theme screenshots are from the running local frontend and backend, using the existing Docker MongoDB database.
 
 A fresh local database starts empty; [add a product](#add-your-first-product) to populate it.
 
