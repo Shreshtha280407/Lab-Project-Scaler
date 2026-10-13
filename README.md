@@ -49,7 +49,6 @@ A full-stack shopping app with product discovery, wishlists, a persistent cart, 
 - **Order history:** view your orders, purchased items, shipping details, and order status.
 - **Responsive interface:** desktop and mobile layouts, plus light and dark themes saved in the browser.
 
-## Screenshots
 
 Catalog, product details, filtering, and theme screenshots are from the running local frontend and backend, using the existing Docker MongoDB database.
 
